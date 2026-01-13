@@ -1,0 +1,76 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-one
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app-one
+  template:
+    metadata:
+      labels:
+        app: app-one
+    spec:
+      containers:
+      - name: app-one
+        image: paulbouwer/hello-kubernetes:1.10
+        ports:
+        - containerPort: 8080
+        env:
+        - name: MESSAGE
+          value: "Hello from App 1!"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-one-service
+spec:
+  selector:
+    app: app-one
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8080
+
+
+
+# ┌─────────────────────────────────────────────────────────────────────────────┐
+# │                        DEPLOYMENT EXPLANATION                               │
+# ├─────────────────────────────┬───────────────────────────────────────────────┤
+# │ Field                       │ Meaning                                       │
+# ├─────────────────────────────┼───────────────────────────────────────────────┤
+# │ apiVersion: apps/v1         │ Kubernetes API version for Deployments       │
+# │ kind: Deployment            │ Resource type - manages Pods lifecycle       │
+# │ metadata.name: app-one      │ Name of this Deployment                      │
+# │ spec.replicas: 1            │ Run 1 copy of this Pod                       │
+# │ selector.matchLabels        │ Find Pods with label app=app-one             │
+# │ template                    │ Pod template - what to create                │
+# │ template.metadata.labels    │ Labels on Pod (must match selector!)         │
+# │ containers                  │ List of containers in the Pod                │
+# │ containers.name             │ Container name inside the Pod                │
+# │ containers.image            │ Docker image to run                          │
+# │ containerPort: 8080         │ App listens on port 8080 inside container    │
+# │ env.MESSAGE                 │ Environment variable passed to container     │
+# └─────────────────────────────┴───────────────────────────────────────────────┘
+
+# ┌─────────────────────────────────────────────────────────────────────────────┐
+# │                         SERVICE EXPLANATION                                 │
+# ├─────────────────────────────┬───────────────────────────────────────────────┤
+# │ Field                       │ Meaning                                       │
+# ├─────────────────────────────┼───────────────────────────────────────────────┤
+# │ apiVersion: v1              │ Kubernetes core API version                  │
+# │ kind: Service               │ Resource type - stable network endpoint      │
+# │ metadata.name               │ Service name (used by Ingress)               │
+# │ selector.app: app-one       │ Find Pods with label app=app-one             │
+# │ ports.protocol: TCP         │ Network protocol                             │
+# │ ports.port: 80              │ Port Service listens on (external)           │
+# │ ports.targetPort: 8080      │ Port on Pod to forward to (internal)         │
+# └─────────────────────────────┴───────────────────────────────────────────────┘
+
+# COMMANDS:
+# - List deployments: kubectl get deployments
+# - List pods: kubectl get pods
+# - List services: kubectl get services

@@ -1,0 +1,79 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: iot-ingress
+spec:
+  rules:
+  - host: app1.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: app-one-service
+            port:
+              number: 80
+              
+  - host: app2.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: app-two-service
+            port:
+              number: 80
+              
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: app-three-service
+            port:
+              number: 80
+
+# ┌─────────────────────────────────────────────────────────────────────────────┐
+# │                         INGRESS EXPLANATION                                 │
+# ├─────────────────────────────┬───────────────────────────────────────────────┤
+# │ Field                       │ Meaning                                       │
+# ├─────────────────────────────┼───────────────────────────────────────────────┤
+# │ apiVersion: networking...   │ Kubernetes networking API for Ingress        │
+# │ kind: Ingress               │ Resource type - HTTP traffic router          │
+# │ metadata.name               │ Name of this Ingress resource                │
+# │ spec.rules                  │ List of routing rules                        │
+# └─────────────────────────────┴───────────────────────────────────────────────┘
+#
+# ┌─────────────────────────────────────────────────────────────────────────────┐
+# │                         ROUTING RULES                                       │
+# ├─────────────────────────────┬───────────────────────────────────────────────┤
+# │ Rule                        │ Meaning                                       │
+# ├─────────────────────────────┼───────────────────────────────────────────────┤
+# │ host: app1.com              │ Match requests with Host: app1.com header    │
+# │ host: app2.com              │ Match requests with Host: app2.com header    │
+# │ (no host - rule 3)          │ ⭐ DEFAULT: Match any/no Host header         │
+# │ path: /                     │ Match root path and everything under it      │
+# │ pathType: Prefix            │ Match paths STARTING with /                  │
+# │ backend.service.name        │ Forward traffic to this Service              │
+# │ backend.service.port        │ Connect to this port on the Service          │
+# └─────────────────────────────┴───────────────────────────────────────────────┘
+#
+# ┌─────────────────────────────────────────────────────────────────────────────┐
+# │                         TRAFFIC FLOW                                        │
+# ├─────────────────────────────────────────────────────────────────────────────┤
+# │                                                                             │
+# │   curl -H "Host: app1.com" → app-one-service → app-one pod → "App 1!"      │
+# │   curl -H "Host: app2.com" → app-two-service → 3 pods (load balanced)      │
+# │   curl (no host)           → app-three-service → app-three pod → "App3!"   │
+# │                                                                             │
+# └─────────────────────────────────────────────────────────────────────────────┘
+#
+# COMMANDS:
+# - Get ingress: kubectl get ingress
+# - Describe ingress: kubectl describe ingress iot-ingress
+# - Test app1: curl -H "Host: app1.com" http://192.168.56.110
+# - Test app2: curl -H "Host: app2.com" http://192.168.56.110
+# - Test app3: curl http://192.168.56.110
