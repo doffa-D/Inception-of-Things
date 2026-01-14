@@ -4,7 +4,12 @@ SERVER_HOST_NAME = "HdagdaguS"
 SERVER_IP = "192.168.56.110"
 
 Vagrant.configure("2") do |config|
-    config.vm.box = "debian/bookworm64"
+    # Using Alpine Linux 3.19 - lightweight and fast
+    config.vm.box = "generic/alpine319"
+    
+    # Enable synced folder with rsync for Alpine
+    config.vm.synced_folder ".", "/vagrant", type: "rsync"
+    
     config.vm.define SERVER_HOST_NAME do |server|
         server.vm.hostname = SERVER_HOST_NAME
         server.vm.network "private_network", ip: SERVER_IP

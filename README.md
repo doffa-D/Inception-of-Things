@@ -127,11 +127,11 @@ Set up a K3d cluster with Argo CD for GitOps-based continuous deployment.
 ┌─────────────────────────────────────────────────────────┐
 │                                                         │
 │   GitHub                        K3d CLUSTER             │
-│   ┌─────────┐                  ┌─────────────────────┐  │
-│   │  ioft   │                  │                     │  │
-│   │  repo   │◄── watches ──────│     ARGO CD         │  │
-│   │  /dev   │                  │   (argocd ns)       │  │
-│   └─────────┘                  └──────────┬──────────┘  │
+│   ┌──────────────┐             ┌─────────────────────┐  │
+│   │ hdagdagu-ioft│             │                     │  │
+│   │    repo      │◄── watches ─│     ARGO CD         │  │
+│   │    /dev      │             │   (argocd ns)       │  │
+│   └──────────────┘             └──────────┬──────────┘  │
 │                                           │             │
 │                                           ▼ deploys     │
 │                                ┌─────────────────────┐  │
@@ -158,8 +158,8 @@ curl localhost:8888
 
 ### GitOps Demo
 1. Check current version: `curl localhost:8888`
-2. Change version in GitHub (`dev/deployment.yaml`)
-3. Wait for Argo CD to sync
+2. Change version in GitHub (`hdagdagu-ioft/dev/deployment.yaml`)
+3. Wait for Argo CD to sync (or manually sync in UI)
 4. Verify update: `curl localhost:8888`
 
 ---

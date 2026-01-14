@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/doffa-D/ioft.git
+    repoURL: https://github.com/doffa-D/hdagdagu-ioft.git
     targetRevision: HEAD
     path: dev
   destination: 
